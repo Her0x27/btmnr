@@ -1,0 +1,25 @@
+[package]
+name = "btmnr"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+windows-service = "0.5"
+windows = { version = "0.48", features = ["Devices_Bluetooth"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+log = "0.4"
+simple-logging = "2.0"
+tokio = { version = "1.0", features = ["full"] }
+
+[workspace]
+members = [
+    "src",
+]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = 'abort'
+strip = true
