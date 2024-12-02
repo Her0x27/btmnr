@@ -1,9 +1,9 @@
 use windows::Win32::Media::Audio::{
     IAudioSessionManager2, IAudioSessionEnumerator, IAudioSessionControl, 
-    IAudioSessionControl2, IMMDevice, IMMDeviceEnumerator, 
-    MMDeviceEnumerator, eRender, eConsole
+    IAudioSessionControl2, IAudioMeterInformation, IMMDevice, 
+    IMMDeviceEnumerator, MMDeviceEnumerator, eRender, eConsole,
 };
-use windows::Win32::System::Com::CoCreateInstance;
+use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_ALL, CLSCTX_INPROC_SERVER};
 use windows::core::Interface;
 
 pub struct AudioMonitor;
