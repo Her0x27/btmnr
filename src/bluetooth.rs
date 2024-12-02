@@ -9,8 +9,23 @@ use windows::Win32::Devices::Bluetooth::{
     BLUETOOTH_SERVICE_ENABLE,
     BLUETOOTH_SERVICE_DISABLE,
 };
+use windows::Win32::Devices::Bluetooth::{
+    BluetoothFindFirstDevice,
+    BluetoothFindNextDevice,
+    BluetoothFindDeviceClose,
+    BLUETOOTH_DEVICE_INFO,
+    BLUETOOTH_DEVICE_SEARCH_PARAMS,
+    BluetoothAuthenticateDevice,
+    BluetoothSetServiceState,
+    BLUETOOTH_SERVICE_ENABLE,
+    BLUETOOTH_SERVICE_DISABLE,
+};
+use windows::Win32::Foundation::BOOL;
 use windows::core::GUID;
 use std::mem::zeroed;
+
+// Convert boolean values to BOOL
+params.fReturnConnected = BOOL::from(true);
 
 const GUID_HANDSFREE_SERVICE: GUID = GUID::from_values(
     0x0000111E, 0x0000, 0x1000, 
