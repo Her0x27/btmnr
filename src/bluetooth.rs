@@ -1,12 +1,13 @@
 use windows::Win32::Devices::Bluetooth::{
-    BluetoothFindFirstDevice, BluetoothFindNextDevice,
-    BluetoothFindDeviceClose, BLUETOOTH_DEVICE_INFO,
-    BLUETOOTH_DEVICE_SEARCH_PARAMS, BluetoothAuthenticateDevice,
-    BluetoothSetServiceState, BLUETOOTH_SERVICE_ENABLE,
+    BluetoothFindFirstDevice,
+    BluetoothFindNextDevice,
+    BluetoothFindDeviceClose,
+    BLUETOOTH_DEVICE_INFO,
+    BLUETOOTH_DEVICE_SEARCH_PARAMS,
+    BLUETOOTH_SERVICE_ENABLE,
     BLUETOOTH_SERVICE_DISABLE
 };
-use windows::Win32::Foundation::GUID;
-
+use windows::core::GUID;
 const GUID_HANDSFREE_SERVICE: GUID = GUID::from_values(
     0x0000111E, 0x0000, 0x1000,
     [0x80, 0x00, 0x00, 0x80, 0x5F, 0x9B, 0x34, 0xFB]
@@ -103,14 +104,14 @@ impl BluetoothController {
     }
 
     fn is_target_device(&self, device_info: &BLUETOOTH_DEVICE_INFO) -> bool {
-        let address = format!("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}",
-            device_info.Address.rgBytes[5],
-            device_info.Address.rgBytes[4],
-            device_info.Address.rgBytes[3],
-            device_info.Address.rgBytes[2],
-            device_info.Address.rgBytes[1],
-            device_info.Address.rgBytes[0],
-        );
+    let address = format!("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}",
+        device_info.Address.Anonymous.rgBytes[5],
+        device_info.Address.Anonymous.rgBytes[4],
+        device_info.Address.Anonymous.rgBytes[3],
+        device_info.Address.Anonymous.rgBytes[2],
+        device_info.Address.Anonymous.rgBytes[1],
+        device_info.Address.Anonymous.rgBytes[0],
+    );
         address == self.device_address
     }
 }
