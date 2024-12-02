@@ -1,10 +1,17 @@
 use windows::Win32::Devices::Bluetooth::{
-    BluetoothFindFirstDevice,
-    BluetoothFindNextDevice,
-    BluetoothFindDeviceClose,
-    BLUETOOTH_DEVICE_INFO,
-    BLUETOOTH_DEVICE_SEARCH_PARAMS,
+    BluetoothFindFirstDevice, BluetoothFindNextDevice,
+    BluetoothFindDeviceClose, BLUETOOTH_DEVICE_INFO,
+    BLUETOOTH_DEVICE_SEARCH_PARAMS, BluetoothAuthenticateDevice,
+    BluetoothSetServiceState, BLUETOOTH_SERVICE_ENABLE,
+    BLUETOOTH_SERVICE_DISABLE
 };
+use windows::Win32::Foundation::GUID;
+
+const GUID_HANDSFREE_SERVICE: GUID = GUID::from_values(
+    0x0000111E, 0x0000, 0x1000,
+    [0x80, 0x00, 0x00, 0x80, 0x5F, 0x9B, 0x34, 0xFB]
+);
+
 use std::mem::zeroed;
 
 pub struct BluetoothController {
