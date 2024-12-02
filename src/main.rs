@@ -4,9 +4,10 @@ use windows_service::{
         ServiceControl, ServiceControlAccept, ServiceExitCode, ServiceState, ServiceStatus,
         ServiceType,
     },
-    service_control_handler::{self, ServiceControlHandler},
+    service_control_handler::{self, ServiceControlHandlerShutdown},
     service_dispatcher,
 };
+
 use windows::Win32::Devices::Bluetooth;
 use serde::{Deserialize, Serialize};
 use log::{info, error, warn};
@@ -26,6 +27,11 @@ mod config;
 use crate::audio::AudioMonitor;
 use crate::bluetooth::BluetoothController;
 use crate::config::Config;
+
+pub struct BluetoothManager {
+    config: Config,
+    running: Arc<AtomicBool>,
+}
 
 impl BluetoothManager {
     fn is_audio_playing(&self) -> bool {
