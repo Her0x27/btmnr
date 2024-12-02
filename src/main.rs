@@ -1,8 +1,31 @@
+use windows_service::{
+    define_windows_service,
+    service::{
+        ServiceControl, ServiceControlAccept, ServiceExitCode, ServiceState, ServiceStatus,
+        ServiceType,
+    },
+    service_control_handler::{self, ServiceControlHandler},
+    service_dispatcher,
+};
+use windows::Win32::Devices::Bluetooth;
+use serde::{Deserialize, Serialize};
+use log::{info, error, warn};
+use std::{
+    sync::{
+        Arc, 
+        atomic::{AtomicBool, Ordering}
+    }, 
+    time::Duration
+};
+use tokio;
+
 mod audio;
 mod bluetooth;
+mod config;
 
-use audio::AudioMonitor;
-use bluetooth::BluetoothController;
+use crate::audio::AudioMonitor;
+use crate::bluetooth::BluetoothController;
+use crate::config::Config;
 
 impl BluetoothManager {
     fn is_audio_playing(&self) -> bool {
