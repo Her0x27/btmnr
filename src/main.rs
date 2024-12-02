@@ -1,7 +1,8 @@
 use windows_service::{
     define_windows_service,
+    service::{ServiceControl, ServiceStatus, ServiceType},
+    service_control_handler::ServiceControlHandlerResult,
     service_dispatcher,
-    service::ServiceState,
 };
 use log::{info, error};
 use std::{
@@ -9,18 +10,14 @@ use std::{
     sync::{Arc, atomic::{AtomicBool, Ordering}}, 
     time::Duration
 };
-// Explicit tokio import
-use tokio::runtime::Runtime;
 
 mod audio;
 mod bluetooth;
 mod config;
 
-use audio::AudioMonitor;
-use bluetooth::BluetoothController;
-use config::Config;
-
-use tokio;
+use crate::audio::AudioMonitor;
+use crate::bluetooth::BluetoothController;
+use crate::config::Config;
 
 struct BluetoothManager {
     config: Config,
