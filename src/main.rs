@@ -4,11 +4,12 @@ use windows_service::{
         ServiceControl, ServiceControlAccept, ServiceExitCode, ServiceState, 
         ServiceStatus, ServiceType,
     },
-    service_control_handler::{self, ServiceControlHandler},
+    service_control_handler::{self, ServiceControlHandlerResult},
     service_dispatcher,
 };
-use log::{info, error, warn};
+use log::{info, error};
 use std::{
+    ffi::OsString,
     sync::{Arc, atomic::{AtomicBool, Ordering}}, 
     time::Duration
 };
@@ -70,8 +71,8 @@ impl BluetoothManager {
 
 define_windows_service!(ffi_service_main, service_main);
 
-fn service_main(arguments: Vec<String>) {
-    if let Err(e) = simple_logging::log_to_file("bluetooth_manager.log", log::LevelFilter::Info) {
+fn service_main(_arguments: Vec<OsString>) {
+    if let Err(_e) = simple_logging::log_to_file("bluetooth_manager.log", log::LevelFilter::Info) {
         return;
     }
 
