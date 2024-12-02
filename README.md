@@ -15,7 +15,7 @@
 3. Настройте config.json под ваши наушники
 4. Установите службу через PowerShell с правами администратора:
 ```powershell
-sc create BluetoothManager binPath= "полный\путь\к\bluetooth_headphones_manager.exe"
+sc create BluetoothManager binPath= "полный\путь\к\btmnr.exe"
 sc start BluetoothManager
 ```
 
