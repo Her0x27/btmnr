@@ -1,11 +1,10 @@
 use windows::Win32::Media::Audio::{
-    IAudioSessionManager2, IAudioSessionEnumerator, IAudioSessionControl, 
-    IAudioSessionControl2, IAudioMeterInformation, IMMDevice, 
-    IMMDeviceEnumerator, MMDeviceEnumerator, eRender, eConsole,
+    IAudioSessionManager2, IAudioSessionEnumerator, IAudioSessionControl2,
+    IMMDevice, IMMDeviceEnumerator, MMDeviceEnumerator, eRender, eConsole,
+    IAudioMeterInformation,
 };
 use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_ALL};
-use windows::core::{Interface, Result};
-use windows::Win32::Foundation::BOOL;
+use windows::core::{Interface, ComInterface, Result};
 
 pub struct AudioMonitor;
 
@@ -18,36 +17,28 @@ impl AudioMonitor {
                 CLSCTX_ALL
             ).unwrap();
 
-            let device: IMMDevice = match enumerator.GetDefaultAudioEndpoint(eRender, eConsole) {
-                Ok(d) => d,
-                Err(_) => return false,
-            };
+            let device: IMMDevice = enumerator
+                .GetDefaultAudioEndpoint(eRender, eConsole)
+                .unwrap();
 
-            let session_manager: IAudioSessionManager2 = match device.Activate::<IAudioSessionManager2>(CLSCTX_ALL, None) {
-                Ok(sm) => sm,
-                Err(_) => return false,
-            };
+            let session_manager: IAudioSessionManager2 = device
+                .Activate::<IAudioSessionManager2>(CLSCTX_ALL, None)
+                .unwrap();
 
-            let session_enum: IAudioSessionEnumerator = match session_manager.GetSessionEnumerator() {
-                Ok(se) => se,
-                Err(_) => return false,
-            };
+            let session_enum: IAudioSessionEnumerator = session_manager
+                .GetSessionEnumerator()
+                .unwrap();
 
-            let count = match session_enum.GetCount() {
-                Ok(c) => c,
-                Err(_) => return false,
-            };
+            let count = session_enum.GetCount().unwrap();
 
             for i in 0..count {
                 if let Ok(session) = session_enum.GetSession(i) {
-                    if let Ok(session2) = session.cast::<IAudioSessionControl2>() {
-                        if let Ok(meter) = session.cast::<IAudioMeterInformation>() {
-                            if let Ok(peak) = meter.GetPeakValue() {
-                                if peak > 0.0 {
-                                    return true;
-                                }
-                            }
-                        }
+                    let session2: IAudioSessionControl2 = session.cast().unwrap();
+                    let meter: IAudioMeterInformation = session.cast().unwrap();
+                    
+                    if !session2.GetSessionInstanceIdentifier().unwrap().is_empty() 
+                        && meter.GetPeakValue().unwrap() > 0.0 {
+                        return true;
                     }
                 }
             }
