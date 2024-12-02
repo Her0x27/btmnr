@@ -9,23 +9,9 @@ use windows::Win32::Devices::Bluetooth::{
     BLUETOOTH_SERVICE_ENABLE,
     BLUETOOTH_SERVICE_DISABLE,
 };
-use windows::Win32::Devices::Bluetooth::{
-    BluetoothFindFirstDevice,
-    BluetoothFindNextDevice,
-    BluetoothFindDeviceClose,
-    BLUETOOTH_DEVICE_INFO,
-    BLUETOOTH_DEVICE_SEARCH_PARAMS,
-    BluetoothAuthenticateDevice,
-    BluetoothSetServiceState,
-    BLUETOOTH_SERVICE_ENABLE,
-    BLUETOOTH_SERVICE_DISABLE,
-};
+use windows::core::{GUID, Result};
 use windows::Win32::Foundation::BOOL;
-use windows::core::GUID;
 use std::mem::zeroed;
-
-// Convert boolean values to BOOL
-params.fReturnConnected = BOOL::from(true);
 
 const GUID_HANDSFREE_SERVICE: GUID = GUID::from_values(
     0x0000111E, 0x0000, 0x1000, 
@@ -41,14 +27,14 @@ impl BluetoothController {
         Self { device_address }
     }
 
-    pub async fn connect(&self) -> windows::core::Result<()> {
+    pub async fn connect(&self) -> Result<()> {
         unsafe {
             let mut params: BLUETOOTH_DEVICE_SEARCH_PARAMS = zeroed();
             params.dwSize = std::mem::size_of::<BLUETOOTH_DEVICE_SEARCH_PARAMS>() as u32;
-            params.fReturnAuthenticated = true;
-            params.fReturnConnected = true;
-            params.fReturnRemembered = true;
-            params.fIssueInquiry = true;
+            params.fReturnAuthenticated = BOOL::from(true);
+            params.fReturnConnected = BOOL::from(true);
+            params.fReturnRemembered = BOOL::from(true);
+            params.fIssueInquiry = BOOL::from(true);
             params.cTimeoutMultiplier = 1;
 
             let mut device_info: BLUETOOTH_DEVICE_INFO = zeroed();
@@ -58,22 +44,20 @@ impl BluetoothController {
             
             loop {
                 if self.is_target_device(&device_info) {
-                    let result = BluetoothAuthenticateDevice(
+                    BluetoothAuthenticateDevice(
                         None,
                         None,
                         &mut device_info,
                         std::ptr::null(),
                         0
-                    );
+                    )?;
                     
-                    if result.is_ok() {
-                        BluetoothSetServiceState(
-                            None,
-                            &mut device_info,
-                            &GUID_HANDSFREE_SERVICE,
-                            BLUETOOTH_SERVICE_ENABLE
-                        )?;
-                    }
+                    BluetoothSetServiceState(
+                        None,
+                        &mut device_info,
+                        &GUID_HANDSFREE_SERVICE,
+                        BLUETOOTH_SERVICE_ENABLE
+                    )?;
                     break;
                 }
 
@@ -87,11 +71,11 @@ impl BluetoothController {
         }
     }
 
-    pub async fn disconnect(&self) -> windows::core::Result<()> {
+    pub async fn disconnect(&self) -> Result<()> {
         unsafe {
             let mut params: BLUETOOTH_DEVICE_SEARCH_PARAMS = zeroed();
             params.dwSize = std::mem::size_of::<BLUETOOTH_DEVICE_SEARCH_PARAMS>() as u32;
-            params.fReturnConnected = true;
+            params.fReturnConnected = BOOL::from(true);
 
             let mut device_info: BLUETOOTH_DEVICE_INFO = zeroed();
             device_info.dwSize = std::mem::size_of::<BLUETOOTH_DEVICE_INFO>() as u32;
