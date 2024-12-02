@@ -4,16 +4,18 @@ use windows::Win32::Devices::Bluetooth::{
     BluetoothFindDeviceClose,
     BLUETOOTH_DEVICE_INFO,
     BLUETOOTH_DEVICE_SEARCH_PARAMS,
+    BluetoothAuthenticateDevice,
+    BluetoothSetServiceState,
     BLUETOOTH_SERVICE_ENABLE,
-    BLUETOOTH_SERVICE_DISABLE
+    BLUETOOTH_SERVICE_DISABLE,
 };
 use windows::core::GUID;
+use std::mem::zeroed;
+
 const GUID_HANDSFREE_SERVICE: GUID = GUID::from_values(
-    0x0000111E, 0x0000, 0x1000,
+    0x0000111E, 0x0000, 0x1000, 
     [0x80, 0x00, 0x00, 0x80, 0x5F, 0x9B, 0x34, 0xFB]
 );
-
-use std::mem::zeroed;
 
 pub struct BluetoothController {
     device_address: String,
@@ -41,7 +43,6 @@ impl BluetoothController {
             
             loop {
                 if self.is_target_device(&device_info) {
-                    // Подключаемся к устройству
                     let result = BluetoothAuthenticateDevice(
                         None,
                         None,
@@ -104,14 +105,16 @@ impl BluetoothController {
     }
 
     fn is_target_device(&self, device_info: &BLUETOOTH_DEVICE_INFO) -> bool {
-    let address = format!("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}",
-        device_info.Address.Anonymous.rgBytes[5],
-        device_info.Address.Anonymous.rgBytes[4],
-        device_info.Address.Anonymous.rgBytes[3],
-        device_info.Address.Anonymous.rgBytes[2],
-        device_info.Address.Anonymous.rgBytes[1],
-        device_info.Address.Anonymous.rgBytes[0],
-    );
-        address == self.device_address
+        unsafe {
+            let address = format!("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}",
+                device_info.Address.Anonymous.rgBytes[5],
+                device_info.Address.Anonymous.rgBytes[4],
+                device_info.Address.Anonymous.rgBytes[3],
+                device_info.Address.Anonymous.rgBytes[2],
+                device_info.Address.Anonymous.rgBytes[1],
+                device_info.Address.Anonymous.rgBytes[0],
+            );
+            address == self.device_address
+        }
     }
 }
