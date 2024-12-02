@@ -16,6 +16,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
+    - name: Get Rust versions
+      id: rust-version
+      run: |
+        echo "rustc=$(rustc -V)" >> $GITHUB_OUTPUT
+        echo "cargo=$(cargo -V)" >> $GITHUB_OUTPUT
+        echo "rustup=$(rustup -V)" >> $GITHUB_OUTPUT
+    
     - name: Install Rust
       uses: actions-rs/toolchain@v1
       with:
