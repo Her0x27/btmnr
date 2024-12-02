@@ -1,0 +1,5 @@
+{
+    "inactivity_timeout": 300,
+    "auto_connect": true,
+    "device_address": "XX:XX:XX:XX:XX:XX"
+}
