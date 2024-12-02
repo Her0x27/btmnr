@@ -1,21 +1,16 @@
 use windows_service::{
     define_windows_service,
     service_dispatcher,
-    service::{
-        ServiceControl, ServiceControlAccept, ServiceExitCode, ServiceState, 
-        ServiceStatus, ServiceType,
-    },
-    service_control_handler::{self, ServiceControlHandlerResult},
-    service_dispatcher,
+    service::ServiceState,
 };
-
 use log::{info, error};
 use std::{
     ffi::OsString,
     sync::{Arc, atomic::{AtomicBool, Ordering}}, 
     time::Duration
 };
-use tokio;
+// Explicit tokio import
+use tokio::runtime::Runtime;
 
 mod audio;
 mod bluetooth;
