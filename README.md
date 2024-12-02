@@ -1,6 +1,6 @@
 # Bluetooth Headphones Manager (btmnr)
 * Windows service that automatically manages Bluetooth headphones based on audio activity
-Системный сервис Windows для автоматического управления Bluetooth-наушниками на основе активности воспроизведения звука.
+* Системный сервис Windows для автоматического управления Bluetooth-наушниками на основе активности воспроизведения звука.
 
 ## Возможности
 - Автоматическое отключение наушников после периода неактивности
