@@ -1,5 +1,6 @@
 use windows_service::{
     define_windows_service,
+    service_dispatcher,
     service::{
         ServiceControl, ServiceControlAccept, ServiceExitCode, ServiceState, 
         ServiceStatus, ServiceType,
@@ -7,6 +8,7 @@ use windows_service::{
     service_control_handler::{self, ServiceControlHandlerResult},
     service_dispatcher,
 };
+
 use log::{info, error};
 use std::{
     ffi::OsString,
@@ -22,6 +24,8 @@ mod config;
 use audio::AudioMonitor;
 use bluetooth::BluetoothController;
 use config::Config;
+
+use tokio;
 
 struct BluetoothManager {
     config: Config,
