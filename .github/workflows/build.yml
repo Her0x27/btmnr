@@ -10,7 +10,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  INSTALLER_NAME: btmnr_installer
+  INSTALLER_NAME: BluetoothHeadphonesManager
 
 jobs:
   build:
@@ -27,8 +27,9 @@ jobs:
         override: true
         
     - name: Install NSIS
-      uses: joncloud/setup-nsis@v1
-    
+      run: |
+        choco install nsis -y
+        
     - name: Build Release
       run: cargo build --release
       
@@ -44,7 +45,7 @@ jobs:
         makensis /DPRODUCT_VERSION="${{ github.ref_name }}" installer.nsi
         
     - name: Upload Installer
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ env.INSTALLER_NAME }}-installer
         path: ${{ env.INSTALLER_NAME }}-setup.exe
