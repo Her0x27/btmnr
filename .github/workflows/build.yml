@@ -16,13 +16,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Get Rust versions
-      id: rust-version
-      run: |
-        echo "rustc=$(rustc -V)" >> $GITHUB_OUTPUT
-        echo "cargo=$(cargo -V)" >> $GITHUB_OUTPUT
-        echo "rustup=$(rustup -V)" >> $GITHUB_OUTPUT
-    
     - name: Install Rust
       uses: actions-rs/toolchain@v1
       with:
@@ -40,15 +33,21 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         
     - name: Build
-      run: cargo build --release
+      run: |
+        cargo build --release
+        echo "build_status=success" >> $GITHUB_ENV
       
     - name: Run tests
-      run: cargo test --all
+      if: env.build_status == 'success'
+      run: |
+        cargo test --all
+        echo "test_status=success" >> $GITHUB_ENV
       
     - name: Upload artifacts
+      if: env.test_status == 'success'
       uses: actions/upload-artifact@v4
       with:
-        name: btmnr
+        name: bluetooth-manager-windows
         path: |
           target/release/btmnr.exe
           config.json
