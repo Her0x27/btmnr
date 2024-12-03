@@ -1,6 +1,5 @@
 use windows_service::{
     define_windows_service,
-    service::ServiceState,
     service_dispatcher,
 };
 use log::{info, error};
@@ -10,7 +9,6 @@ use std::{
     time::Duration
 };
 use tokio;
-
 mod audio;
 mod bluetooth;
 mod config;
