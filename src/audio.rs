@@ -4,7 +4,8 @@ use windows::Win32::Media::Audio::{
     MMDeviceEnumerator, eRender, eConsole,
 };
 use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_ALL};
-use windows::core::ComInterface;
+use windows::core::{Interface, ComInterface};
+
 pub struct AudioMonitor;
 
 impl AudioMonitor {
