@@ -44,7 +44,8 @@ impl BluetoothController {
                 BluetoothAuthenticateDevice(
                     None,
                     None,
-                    &mut device_info
+                    &mut device_info,
+                    None
                 );
                 
                 BluetoothSetServiceState(
