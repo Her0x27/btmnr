@@ -5,8 +5,6 @@ use windows::Win32::Media::Audio::{
 };
 use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_ALL};
 use windows::core::ComInterface;
-use windows::Win32::Foundation::BOOL;
-
 pub struct AudioMonitor;
 
 impl AudioMonitor {
