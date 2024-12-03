@@ -1,13 +1,16 @@
-name: Build and Test
+name: Build and Create Installer
 
 on:
   push:
     branches: [ main ]
+    tags:
+      - 'v*'
   pull_request:
     branches: [ main ]
 
 env:
   CARGO_TERM_COLOR: always
+  INSTALLER_NAME: btmnr_installer
 
 jobs:
   build:
@@ -22,32 +25,32 @@ jobs:
         toolchain: stable
         profile: minimal
         override: true
-    
-    - name: Cache dependencies
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         
-    - name: Build
-      run: |
-        cargo build --release
-        echo "build_status=success" >> $GITHUB_ENV
+    - name: Install NSIS
+      uses: joncloud/setup-nsis@v1
+    
+    - name: Build Release
+      run: cargo build --release
       
-    - name: Run tests
-      if: env.build_status == 'success'
+    - name: Prepare Install Files
       run: |
-        cargo test --all
-        echo "test_status=success" >> $GITHUB_ENV
-      
-    - name: Upload artifacts
-      if: env.test_status == 'success'
-      uses: actions/upload-artifact@v4
+        mkdir installer
+        copy target\release\btmnr.exe installer\
+        copy config.json installer\
+        copy README.md installer\
+        
+    - name: Create Installer
+      run: |
+        makensis /DPRODUCT_VERSION="${{ github.ref_name }}" installer.nsi
+        
+    - name: Upload Installer
+      uses: actions/upload-artifact@v3
       with:
-        name: bluetooth-manager-windows
-        path: |
-          target/release/btmnr.exe
-          config.json
+        name: ${{ env.INSTALLER_NAME }}-installer
+        path: ${{ env.INSTALLER_NAME }}-setup.exe
+        
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ${{ env.INSTALLER_NAME }}-setup.exe
