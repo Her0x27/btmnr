@@ -15,6 +15,7 @@ impl Config {
         Ok(config)
     }
 
+    #[allow(dead_code)]
     pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
         let config_str = serde_json::to_string_pretty(self)?;
         fs::write("config.json", config_str)?;
