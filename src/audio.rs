@@ -4,7 +4,7 @@ use windows::Win32::Media::Audio::{
     MMDeviceEnumerator, eRender, eConsole,
 };
 use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_ALL};
-use windows::core::{Interface, ComInterface};
+use windows::core::ComInterface;
 
 pub struct AudioMonitor;
 
@@ -34,7 +34,8 @@ impl AudioMonitor {
             for i in 0..count {
                 if let Ok(session) = session_enum.GetSession(i) {
                     let session2: IAudioSessionControl2 = session.cast().unwrap();
-                    if !session2.GetSessionInstanceIdentifier().unwrap().is_empty() {
+                    let id = session2.GetSessionInstanceIdentifier().unwrap();
+                    if !id.is_null() {
                         return true;
                     }
                 }
