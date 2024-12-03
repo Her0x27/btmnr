@@ -7,7 +7,7 @@
 SetCompressor lzma
 
 Name "${PRODUCT_NAME}"
-OutFile "${INSTALLER_NAME}-setup.exe"
+OutFile "btmnr-setup.exe"
 InstallDir "$PROGRAMFILES\${PRODUCT_NAME}"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
