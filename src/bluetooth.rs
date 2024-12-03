@@ -1,12 +1,12 @@
 use windows::Win32::Devices::Bluetooth::{
     BluetoothFindFirstDevice,
-    BluetoothFindNextDevice,
     BluetoothFindDeviceClose,
     BLUETOOTH_DEVICE_INFO,
     BLUETOOTH_DEVICE_SEARCH_PARAMS,
     BluetoothAuthenticateDevice,
     BluetoothSetServiceState,
 };
+
 use windows::Win32::Foundation::BOOL;
 use windows::core::GUID;
 use std::mem::zeroed;
@@ -44,9 +44,7 @@ impl BluetoothController {
                 BluetoothAuthenticateDevice(
                     None,
                     None,
-                    &mut device_info,
-                    std::ptr::null(),
-                    0
+                    &mut device_info
                 );
                 
                 BluetoothSetServiceState(
