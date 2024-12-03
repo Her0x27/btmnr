@@ -1,10 +1,11 @@
 use windows::Win32::Media::Audio::{
-    IAudioSessionManager2, IAudioSessionEnumerator, IAudioSessionControl2,
-    IMMDevice, IMMDeviceEnumerator, MMDeviceEnumerator, eRender, eConsole,
-    IAudioMeterInformation,
+    IAudioSessionManager2, IAudioSessionEnumerator, IAudioSessionControl, 
+    IAudioSessionControl2, IMMDevice, IMMDeviceEnumerator, 
+    MMDeviceEnumerator, eRender, eConsole,
 };
 use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_ALL};
-use windows::core::{Interface, ComInterface, Result};
+use windows::core::Interface;
+use windows::Win32::Foundation::BOOL;
 
 pub struct AudioMonitor;
 
@@ -22,7 +23,7 @@ impl AudioMonitor {
                 .unwrap();
 
             let session_manager: IAudioSessionManager2 = device
-                .Activate::<IAudioSessionManager2>(CLSCTX_ALL, None)
+                .cast::<IAudioSessionManager2>()
                 .unwrap();
 
             let session_enum: IAudioSessionEnumerator = session_manager
@@ -34,10 +35,7 @@ impl AudioMonitor {
             for i in 0..count {
                 if let Ok(session) = session_enum.GetSession(i) {
                     let session2: IAudioSessionControl2 = session.cast().unwrap();
-                    let meter: IAudioMeterInformation = session.cast().unwrap();
-                    
-                    if !session2.GetSessionInstanceIdentifier().unwrap().is_empty() 
-                        && meter.GetPeakValue().unwrap() > 0.0 {
+                    if !session2.GetSessionInstanceIdentifier().unwrap().is_empty() {
                         return true;
                     }
                 }
