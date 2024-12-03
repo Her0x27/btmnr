@@ -1,7 +1,6 @@
 use windows_service::{
     define_windows_service,
-    service::{ServiceControl, ServiceStatus, ServiceType},
-    service_control_handler::ServiceControlHandlerResult,
+    service::ServiceState,
     service_dispatcher,
 };
 use log::{info, error};
@@ -10,6 +9,7 @@ use std::{
     sync::{Arc, atomic::{AtomicBool, Ordering}}, 
     time::Duration
 };
+use tokio;
 
 mod audio;
 mod bluetooth;
