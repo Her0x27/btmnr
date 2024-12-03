@@ -21,7 +21,6 @@ Section "MainSection" SEC01
   File "installer\README.md"
   
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME}"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\btmnr.exe"
   
   # Install Windows Service
   ExecWait 'sc create BluetoothManager binPath= "$INSTDIR\btmnr.exe" start= auto'
